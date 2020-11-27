@@ -20,41 +20,50 @@ On the linear convergence of the circumcentered-reflection method. Oper. Res. Le
 [doi:10.1016/j.orl.2017.11.018](https://doi.org/10.1016/j.orl.2017.11.018)
 """
 function FindCircumcentermSet(X)
-# Finds the Circumcenter of  linearly independent points  X = [X1, X2, X3, ... Xn]
-    # println(typeof(X))
-    lengthX = length(X)
-    if lengthX  == 1
-        return X[1]
-    elseif lengthX == 2
-        return .5*(X[1] + X[2])
-    end
-    V = []
-    b = Float64[]
-    # Forms V = [X[2] - X[1] ... X[n]-X[1]]
-    # and b = [dot(V[1],V[1]) ... dot(V[n-1],V[n-1])]
-    for ind in 2:lengthX
-        difXnX1 = X[ind]-X[1]
-        push!(V,difXnX1)
-        push!(b,dot(difXnX1,difXnX1))
-    end
-
-    # Forms Gram Matrix
-    dimG = lengthX-1
-    G = diagm(b)
-
-    for irow in 1:(dimG-1)
-        for icol in  (irow+1):dimG
-            G[irow,icol] = dot(V[irow],V[icol])
-            G[icol,irow] = G[irow,icol]
+    # Finds the Circumcenter of  linearly independent points  X = [X1, X2, X3, ... Xn]
+        # println(typeof(X))
+        lengthX = length(X)
+        if lengthX  == 1
+            return X[1]
+        elseif lengthX == 2
+            return .5*(X[1] + X[2])
         end
+        V = []
+        b = Float64[]
+        # Forms V = [X[2] - X[1] ... X[n]-X[1]]
+        # and b = [dot(V[1],V[1]) ... dot(V[n-1],V[n-1])]
+        for ind in 2:lengthX
+            difXnX1 = X[ind]-X[1]
+            push!(V,difXnX1)
+            push!(b,dot(difXnX1,difXnX1))
+        end
+
+       # Forms Gram Matrix
+        dimG = lengthX-1
+        G = diagm(b)
+
+        for irow in 1:(dimG-1)
+            for icol in  (irow+1):dimG
+                G[irow,icol] = dot(V[irow],V[icol])
+                G[icol,irow] = G[irow,icol]
+            end
+        end
+        # println(rank(G))
+        y = G\b
+        # if isposdef(G)
+        #     L = cholesky(G)
+        #     y = L\b
+        # else
+        #     @warn "Gram matrix is not SPD"
+        #     L = qr(G)
+        #     y=L\b
+        # end
+        CC = X[1]
+        for ind in 1:dimG
+            CC += .5*y[ind]*V[ind]
+        end
+        return CC
     end
-    y = G\b
-    CC = X[1]
-    for ind in 1:dimG
-        CC += .5*y[ind]*V[ind]
-    end
-    return CC
-end
 ####################################
 """
     proj = ProjectIndicator(indicator,x)
@@ -75,3 +84,23 @@ end
         reflec = 2*proj - x
     end
 ####################################
+function StartingPoint(n::Int64)
+    ## Creates a random point in R^n
+    x=zeros(n);
+    while norm(x)<2
+        x = randn(n);
+    end
+    # norm between 5 and 15
+    foonorm = (15-5)*rand() + 5
+    return foonorm*x/norm(x);
+end
+
+####################################
+function StartingPoint(m::Int64,n::Int64)
+    ## Creates a random point in R^{m\times n}
+    X=zeros(m,n)
+    for j in 1:n
+        X[:,j] = StartingPoint(m)
+    end
+    return X
+end
