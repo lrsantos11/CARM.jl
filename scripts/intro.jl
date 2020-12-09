@@ -1,3 +1,4 @@
 using DrWatson
 @quickactivate "CARM"
-DrWatson.greet()
+
+include(joinpath(srcdir(),"CARM.jl"))

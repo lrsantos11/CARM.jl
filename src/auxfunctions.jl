@@ -3,6 +3,7 @@ using LinearAlgebra
 using Printf
 using Random
 using ProximalOperators
+using PolynomialRoots
 
 ####################################
 
@@ -103,4 +104,25 @@ function StartingPoint(m::Int64,n::Int64)
         X[:,j] = StartingPoint(m)
     end
     return X
+end
+
+"""
+        ProjectEpigraphofQuadratic(v,s)
+Project ``(v,t) ∈ R^{n+1}`` onto the epigraph of ``f(x) = αx^Tx``, such that ``f(v) '≤ t``.
+"""
+function ProjectEpigraphofQuadratic(v::Union{AbstractArray,Number},t::Number, α::Float64=1.0)
+        #PolynomialCoefficient
+        if α*dot(v,v) <= t
+                return v, t
+        end
+        a0 = t-α*dot(v,v)
+        a1 = 4*α*t + 1.
+        a2 = 4*α^2*t + 4*α
+        a3 = 4*α^2
+        r = (roots([a0,a1,a2,a3]))
+        indexreal =  findall(x->abs.(x)<1e-12,imag.(r))
+        λ = (maximum(real.(r[indexreal])))
+        x = 1/(1+2*α*λ) * v
+        t += λ
+        return x, t
 end
