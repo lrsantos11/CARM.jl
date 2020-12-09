@@ -105,24 +105,34 @@ function StartingPoint(m::Int64,n::Int64)
     end
     return X
 end
-
+####################################
 """
-        ProjectEpigraphofQuadratic(v,s)
-Project ``(v,t) ∈ R^{n+1}`` onto the epigraph of ``f(x) = αx^Tx``, such that ``f(v) '≤ t``.
+        ProjectEpigraphofQuadratic(s,v,α)
+Project ``(s,v) ∈ R^{n+1}`` onto the epigraph of ``f(x) = αx^Tx``, such that ``f(v) '≤ s``.
 """
-function ProjectEpigraphofQuadratic(v::Union{AbstractArray,Number},t::Number, α::Float64=1.0)
-        #PolynomialCoefficient
-        if α*dot(v,v) <= t
-                return v, t
+function ProjectEpigraphofQuadratic(s::Number,v::Union{AbstractArray,Number}; α::Float64=1.0)
+        if α*dot(v,v) <= s
+                return s, v
         end
-        a0 = t-α*dot(v,v)
-        a1 = 4*α*t + 1.
-        a2 = 4*α^2*t + 4*α
+        #PolynomialCoefficients
+        # a3μ³ + a2μ² + a1μ  + a0 = 0    
+        a0 = s-α*dot(v,v)
+        a1 = 4*α*s + 1.
+        a2 = 4*α^2*s + 4*α
         a3 = 4*α^2
-        r = (roots([a0,a1,a2,a3]))
+        r = roots([a0,a1,a2,a3])
         indexreal =  findall(x->abs.(x)<1e-12,imag.(r))
-        λ = (maximum(real.(r[indexreal])))
-        x = 1/(1+2*α*λ) * v
-        t += λ
-        return x, t
+        μ  = (maximum(real.(r[indexreal])))
+        x = 1/(1+2*α*μ ) * v
+        t =  μ + s
+        return t, x
+end
+####################################
+"""
+        ProjectEpigraphofQuadratic(x,α)
+Project ``x = [x₀,x̂] ∈ R^{n+1}`` onto the epigraph of ``f(u) = αu^Tu``, such that ``f(x̂) '≤ x₀   ``.
+"""
+function ProjectEpigraphofQuadratic(x::AbstractArray; α::Float64=1.0)
+    t, x = ProjectEpigraphofQuadratic(x[1],x[2:end], α=α)
+    return [t;x]
 end
