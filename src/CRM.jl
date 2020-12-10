@@ -15,16 +15,17 @@ function CRMiteration(xCRM::Vector, ReflectA, ReflectB)
     return xCRM  
 end 
 
-function CRM(x₀::Vector,ReflectA, ReflectB;EPSVAL::Float64=1e-5,itmax::Int = 100,filedir::String[])
+function CRM(x₀::Vector,ReflectA::Function, ReflectB::Function; EPSVAL::Float64=1e-5,itmax::Int = 100,filedir::String = "")
     k = 1
     tolCRM = 1.
     xCRM = x₀
-    printoOnFile(filedir,xMAP')
+    printoOnFile(filedir,xCRM',deletefile=true)
     while tolCRM > EPSVAL && k <= itmax
         xCRMOld = copy(xCRM)
         xCRM  = CRMiteration(xCRM, ReflectA, ReflectB)
-        printoOnFile(filedir,xMAP')
+        printoOnFile(filedir,xCRM')
         tolCRM = norm(xCRM-xCRMOld,Inf)
         k += 1
     end
+    return xCRM, tolCRM, k
 end

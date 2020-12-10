@@ -4,7 +4,7 @@ using Printf
 using Random
 using ProximalOperators
 using PolynomialRoots
-
+using DelimitedFiles
 ####################################
 
 """
@@ -93,7 +93,11 @@ function StartingPoint(n::Int64)
     end
     # norm between 5 and 15
     foonorm = (15-5)*rand() + 5
-    return foonorm*x/norm(x);
+    x *= foonorm/norm(x)
+    if n == 1
+        x = x[1]
+    end
+    return x 
 end
 
 ####################################
@@ -119,54 +123,6 @@ function printoOnFile(filename::String,printline::AbstractArray; deletefile::Boo
     end
     open(filename,"a") do file
         writedlm(file,printline)
-    end
-end
-####################################
-
-
-"""
-        ProjectEpiQuadratic(s,v,α)
-Project ``(s,v) ∈ R^{n+1}`` onto the epigraph of ``f(x) = αx^Tx``, such that ``f(v) '≤ s``.
-"""
-function ProjectEpiQuadratic(s::Number,v::Union{AbstractArray,Number}; α::Float64=1.0)
-        if α*dot(v,v) <= s
-                return s, v
-        end
-        #PolynomialCoefficients
-        # a3μ³ + a2μ² + a1μ  + a0 = 0    
-        a0 = s-α*dot(v,v)
-        a1 = 4*α*s + 1.
-        a2 = 4*α^2*s + 4*α
-        a3 = 4*α^2
-        r = roots([a0,a1,a2,a3])
-        indexreal =  findall(x->abs.(x)<1e-12,imag.(r))
-        μ  = (maximum(real.(r[indexreal])))
-        x = 1/(1+2*α*μ ) * v
-        t =  μ + s
-        return t, x
-end
-####################################
-"""
-        ProjectEpiQuadratic(x,α)
-Project ``x = [x₀,x̂] ∈ R^{n+1}`` onto the epigraph of ``f(u) = αu^Tu``, such that ``f(x̂) '≤ x₀   ``.
-"""
-function ProjectEpiQuadratic(x::AbstractArray; α::Float64=1.0)
-    t, x = ProjectEpiQuadratic(x[1],x[2:end], α=α)
-    return [t;x]
-end
-
-####################################
-"""
-    ApproxProject(x,g,∂g)
-
-"""
-function ApproxProject(x::Vector,g,∂g)
-    gx = g(x)
-    if gx ≤ 0
-        return x
-    else
-        ∂gx = ∂g(x)
-        return x .- (gx/dot(∂gx,∂gx))*∂gx
     end
 end
 
