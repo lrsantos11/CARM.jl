@@ -7,7 +7,7 @@ using PolynomialRoots
 
 ####################################
 
-"""jldoctest
+"""
 FindCircumcentermSet(X)
 
 Finds the Circumcenter of linearly independent vectors ``x_0,x_1,…,x_m``, columns of matrix ``X``,
@@ -106,11 +106,29 @@ function StartingPoint(m::Int64,n::Int64)
     return X
 end
 ####################################
+function printoOnFile(filename::String,printline::AbstractArray; deletefile::Bool=false)
+    if isempty(filename)
+        return
+    end
+    if deletefile
+        try
+            rm(filename)
+        catch e
+            @warn e
+        end
+    end
+    open(filename,"a") do file
+        writedlm(file,printline)
+    end
+end
+####################################
+
+
 """
-        ProjectEpigraphofQuadratic(s,v,α)
+        ProjectEpiQuadratic(s,v,α)
 Project ``(s,v) ∈ R^{n+1}`` onto the epigraph of ``f(x) = αx^Tx``, such that ``f(v) '≤ s``.
 """
-function ProjectEpigraphofQuadratic(s::Number,v::Union{AbstractArray,Number}; α::Float64=1.0)
+function ProjectEpiQuadratic(s::Number,v::Union{AbstractArray,Number}; α::Float64=1.0)
         if α*dot(v,v) <= s
                 return s, v
         end
@@ -129,10 +147,34 @@ function ProjectEpigraphofQuadratic(s::Number,v::Union{AbstractArray,Number}; α
 end
 ####################################
 """
-        ProjectEpigraphofQuadratic(x,α)
+        ProjectEpiQuadratic(x,α)
 Project ``x = [x₀,x̂] ∈ R^{n+1}`` onto the epigraph of ``f(u) = αu^Tu``, such that ``f(x̂) '≤ x₀   ``.
 """
-function ProjectEpigraphofQuadratic(x::AbstractArray; α::Float64=1.0)
-    t, x = ProjectEpigraphofQuadratic(x[1],x[2:end], α=α)
+function ProjectEpiQuadratic(x::AbstractArray; α::Float64=1.0)
+    t, x = ProjectEpiQuadratic(x[1],x[2:end], α=α)
     return [t;x]
+end
+
+####################################
+"""
+    ApproxProject(x,g,∂g)
+
+"""
+function ApproxProject(x::Vector,g,∂g)
+    gx = g(x)
+    if gx ≤ 0
+        return x
+    else
+        ∂gx = ∂g(x)
+        return x .- (gx/dot(∂gx,∂gx))*∂gx
+    end
+end
+
+####################################
+"""
+Reflection(x,fproj)
+Reflection using any projection function `fproj`
+"""
+function Reflection(x,fproj)
+    return 2*fproj(x) - x
 end
