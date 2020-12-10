@@ -22,9 +22,9 @@ ReflectK(x) = Reflection(x,ProjectK)
 
 
 xCRM, tol, k = CRM(x₀,ReflectK,ReflectU)
-@show tol, k
+@show "CRM", tol, k
 xMAP, tol, k = MAP(x₀,ProjectK,ProjectU,itmax=2000)
-@show tol, k
+@show "MAP", tol, k
 
 # Outer Projection onto convex $K = \\operatorname(epi)(\alpha x^Tx)$
 
@@ -35,7 +35,7 @@ ApReflectK(x) = Reflection(x,ApProjectK)
 
 filedirCARM = joinpath(datadir(),"sims","CARM_Epi.dat")
 xCARM, tol, k = CRM(x₀,ApReflectK,ReflectU,filedir=filedirCARM)
-@show tol, k
+@show "CARM", tol, k
 filedirAMAP = joinpath(datadir(),"sims","AMAP_Epi.dat")
 xAMAP, tol, k = MAP(x₀,ApProjectK,ProjectU,itmax=2000,filedir=filedirAMAP)
-@show tol, k;
+@show "AMAP", tol, k;
