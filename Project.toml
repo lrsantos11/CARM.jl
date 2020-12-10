@@ -2,6 +2,7 @@ name = "CARM"
 authors = ["Guilherme Araújo", "Roger Behling", "Yunier Bello-Cruz", "Luiz-Rafael Santos"]
 
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
 PolynomialRoots = "3a141323-8675-5d76-9d11-e1df1406c778"

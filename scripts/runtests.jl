@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "CARM"
 
-include(joinpath(srcdir(),"CARM.jl"))
+include("../src/CARM.jl")
 using Random
 Random.seed!(1234)
 
