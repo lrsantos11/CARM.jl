@@ -52,3 +52,7 @@ function ApproxProject(x::Vector,g::Function,∂g::Function)
         return x .- (gx/dot(∂gx,∂gx))*∂gx
     end
 end
+
+function RelaxApproxProject(x::Vector,g::Function,∂g::Function; λ::Float64=1.0)
+    return λ*ApproxProject(x,g,∂g)+(1-λ)*x
+end
