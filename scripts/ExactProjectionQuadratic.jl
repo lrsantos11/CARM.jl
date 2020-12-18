@@ -1,8 +1,3 @@
-using DrWatson
-@quickactivate "CARM"
-
-include("../src/CARM.jl")
-using Random
 Random.seed!(1234)
 
 n = 1

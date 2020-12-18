@@ -1,4 +1,4 @@
-
+__precompile__()
 include("auxfunctions.jl")
 global const ZERO_VAL = 1e-15
 include("CRM.jl")
@@ -43,16 +43,12 @@ end
     ApproxProject(x,g,∂g)
 
 """
-function ApproxProject(x::Vector,g::Function,∂g::Function)
+function ApproxProject(x::Vector,g::Function,∂g::Function;λ::Float64=1.0)
     gx = g(x)
     if gx ≤ 0
         return x
     else
         ∂gx = ∂g(x)
-        return x .- (gx/dot(∂gx,∂gx))*∂gx
+        return λ*( x .- (gx/dot(∂gx,∂gx))*∂gx ).+ (1-λ)*x
     end
-end
-
-function RelaxApproxProject(x::Vector,g::Function,∂g::Function; λ::Float64=1.0)
-    return λ*ApproxProject(x,g,∂g)+(1-λ)*x
 end
