@@ -2,8 +2,7 @@ using DrWatson
 @quickactivate "CARM"
 
 using Random, Distributions
-include("../src/CARM.jl")
-using Random
+include(srcdir("CARM.jl"))
 
 include("ExactProjectionQuadratic.jl")
 include("InexactProjectionQuadratic.jl")

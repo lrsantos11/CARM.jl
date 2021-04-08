@@ -18,9 +18,9 @@ g(x) = α*dot(x[1:end-1],x[1:end-1]) - x[end]
 ApProjectK(x) = ApproxProject(x,g,∂g,λ=λ)
 ApReflectK(x) = Reflection(x,ApProjectK)
 
-filedirCARM = joinpath(datadir(),"sims","CARM_Epi.dat")
+filedirCARM = datadir("sims","CARM_Epi.dat")
 xCARM, tol, k = CRM(x₀,ApReflectK,ReflectU,filedir=filedirCARM)
 @show "CARM", tol, k, λ
-filedirAMAP = joinpath(datadir(),"sims","AMAP_Epi.dat")
+filedirAMAP = datadir("sims","AMAP_Epi.dat")
 xAMAP, tol, k = MAP(x₀,ApProjectK,ProjectU,itmax=2000,filedir=filedirAMAP)
 @show "AMAP", tol, k, λ;
