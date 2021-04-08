@@ -1,4 +1,4 @@
-# CARM
+# CARM - Circumcentered-Approximate-Reflection Method
 
 This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
 to make a reproducible scientific project named
@@ -15,6 +15,10 @@ To (locally) reproduce this project, do the following:
    julia> using Pkg
    julia> Pkg.activate("path/to/this/project")
    julia> Pkg.instantiate()
+   ```
+2. If one wants to run all the tests, do on Julia console
+   ```
+   julia> include(scriptsdir("runtests.jl"))
    ```
 
 This will install all necessary packages for you to be able to run the scripts and
